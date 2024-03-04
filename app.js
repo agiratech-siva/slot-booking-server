@@ -8,6 +8,12 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
+
+app.get("/", (req,res,next) => {
+    res.status(200).send({message: "welcome to my server"});
+})
+
+
 app.post("/users", async (req, res, next) => {
   const { name, mailId, phone, employeeId } = req.body;
   try {
@@ -45,6 +51,11 @@ app.get("/getUserdetails/:id", async (req, res, next) => {
     res.status(500).send({message: "server error"});
   }
 });
+
+app.use((req,res,next) => {
+    res.status(404).send({message: "page not found"});
+});
+
 
 mongoose
   .connect(
