@@ -8,7 +8,6 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
-
 app.get("/", (req,res,next) => {
     res.status(200).send({message: "welcome to my server"});
 })
@@ -62,6 +61,6 @@ mongoose
     "mongodb+srv://agirasiva:mYJlwoA7hfqkd12F@cluster0.evyud5n.mongodb.net/slotbooking?retryWrites=true&w=majority"
   )
   .then(() => {
-    app.listen(process.env.PORT);
+    app.listen(8000);
     console.log("db connected successfully");
   });
