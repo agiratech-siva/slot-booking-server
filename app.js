@@ -34,7 +34,7 @@ app.get("/teamacceptnotification/:id/:status", async (req,res,next) => {
   console.log("inside team accept notifications");
   const {id,status} = req.params;
   if(status == "true"){
-    await getDb().set(id,"true");
+    await getDb().SETEX(id,20,"true");
   }else{
     await getDb().del(id);
   }
