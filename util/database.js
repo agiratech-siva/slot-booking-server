@@ -21,7 +21,9 @@ const userSchema = mongoose.Schema({
 
     mail: {
         type: String
-    }
+    },
+
+    teamusersId: [String],
 
 },{timeStamps: true});
 
