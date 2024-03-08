@@ -1,11 +1,14 @@
 const express = require("express");
-const User = require("./util/database");
+const User = require("./models/user");
+const Team = require("./models/team");
 const app = express();
 const mongoose = require("mongoose");
-const {getAccessToken} = require("./notifications/sendnotification")
+const {getAccessToken,sendTeamAcceptRejectNotification} = require("./notifications/sendnotification")
 const cors = require("cors");
 const uuid = require('uuid');
-const getDb = require("./util/redisdatabase");
+const port = process.env.PORT || 8000;
+const {config} = require("dotenv");
+config();
 
 app.use(cors());
 app.use(express.json());
@@ -25,41 +28,150 @@ app.get("/listusersforteam/:id", async (req,res,next) => {
       }}
     ]
   });
-  console.log(userslist, typeof userslist);
+ 
 
   res.status(200).send({message: "successful", userslist: userslist});
 })
 
-app.get("/teamacceptnotification/:id/:status", async (req,res,next) => {
-  console.log("inside team accept notifications");
-  const {id,status} = req.params;
+app.get("/teamacceptnotification/:employeeId/:teamNotificationId/:status/:teamname", async (req,res,next) => {
+  const {employeeId,teamNotificationId,status,teamname} = req.params;
+  const user = await User.findOne({employeeId: employeeId});
+
   if(status == "true"){
-    await getDb().SETEX(id,20,"true");
+    let requiredData;
+    console.log(user.teamRequests.length);
+    user.teamRequests = user.teamRequests.filter((obj) => {
+      if(obj.teamNotificationId == teamNotificationId){
+        requiredData = obj;
+        return false
+      }
+      return true;
+    })
+    console.log(user.teamRequests.length);
+    if(!requiredData){
+      return res.status(200).send({message: "successful"});
+    }
+    const senderId = requiredData.senderDetails.employee_Id;
+    user.teamusersId.push(senderId);
+    const senderUser = await User.findOne({employeeId: senderId});
+    senderUser.teamusersId.push(employeeId);
+    await Team.create({
+      name: teamname,
+      members: [user._id, senderUser._id]
+    })
+    await user.save();
+    await senderUser.save();
+    senderUser.registeredToken.map(registeredToken => {
+      sendTeamAcceptRejectNotification(registeredToken,'accepted',teamname);
+    })
+    
+
+
   }else{
-    await getDb().del(id);
+    user.teamRequests = user.teamRequests.filter((obj) => {
+      if(obj.teamNotificationId == teamNotificationId){
+        return false
+      }
+      return true;
+    })
+    await user.save();
   }
-  console.log(id,status);
+  
   res.status(200).send({message: "successful"});
 })
 
-app.get("/sendJoinTeamNotification/:id", async(req,res,next) => {
-  const id = req.params.id;
-  const user = await User.findOne({employeeId: id});
-  const registeredTokens = user.registeredToken;
-  console.log(registeredTokens);
-  const bearertoken = await getAccessToken();
-  console.log(bearertoken);
 
+app.get("/getteamrequests/:id", async (req,res,next) => {
+  const id = req.params.id;
+  console.log("inthefield");
+  try{
+    const data = await User.aggregate([
+      {
+          $match: { employeeId: id } 
+      },
+      {
+          $unwind: "$teamRequests"
+     },
+      {
+          $lookup: {
+              from: "users", 
+              localField: "teamRequests.senderDetails.employee_Id",
+              foreignField: "employeeId",
+              as: "senderDetails" 
+          }
+      },
+      {
+          $unwind: "$senderDetails" 
+      },
+      {
+          $group: {
+              _id: "$_id", 
+            
+              teamRequests: { 
+                  $push: { 
+                      $mergeObjects: [
+                          "$teamRequests",
+                          { 
+                              senderDetails: { 
+                                  fullname: "$senderDetails.fullname",
+                                  mail: "$senderDetails.mail"
+                              }
+                          }
+                      ]
+                  } 
+              }
+          }
+      },
+      {
+          $project: {
+              _id: 0, 
+              name: 1,
+              teamRequests: 1
+          }
+      }
+  ]);
+  
+  console.log(data);
+
+    res.status(200).send({message: "successful", data: data});
+  }catch (err){
+    console.log(err);
+    res.status(500).send({message: "server error"});
+  }
+  
+  
+})
+
+app.get("/sendJoinTeamNotification/:id/:senderId/:teamName", async(req,res,next) => {
+  const id = req.params.id;
+  const senderId = req.params.senderId;
+  const teamName = req.params.teamName;
+  const user = await User.findOne({employeeId: id});
+  console.log(user);
+  const senderusername = await User.findOne({employeeId: senderId},{fullname: true, _id: false});
+  console.log(id,senderId);
+  console.log("senderusername",senderusername);
+  const registeredTokens = user.registeredToken;
+  const bearertoken = await getAccessToken();
   function generateNotificationRequestId() {
     const timestamp = new Date().getTime();
     const uniqueId = uuid.v4();
-    const notificationRequestId = `${timestamp}_${uniqueId}`;
+    const notificationRequestId = `teamnotification_${timestamp}_${uniqueId}`;
     return notificationRequestId;
   }
   const notificationRequestId = generateNotificationRequestId();
-  await getDb().SETEX(notificationRequestId, 100, "false");
+  const generate = {
+    teamNotificationId: notificationRequestId,
+    teamName: teamName,
+        senderDetails : {
+            employee_Id: senderId
+        }
+  }
+  user.teamRequests.push(generate);
+  await user.save();
+
   registeredTokens.map(async (token) => {
-    console.log("token", token);
+    
     try {
         console.log("token fetch started");
         const response = await fetch("https://fcm.googleapis.com/v1/projects/slot-booking-e099d/messages:send", {
@@ -71,12 +183,12 @@ app.get("/sendJoinTeamNotification/:id", async(req,res,next) => {
             body: JSON.stringify({
                 "message": {
                     "token": `${token}`,
-                    "notification": {
-                        "title": "team invitation",
-                        "body": "accept the request friend"
-                    },
                     "data" : {
-                      "notificationRequestId": notificationRequestId
+                      "title": `team invitation from ${senderusername.fullname}}`,
+                      "body": `team name: ${teamName} `,
+                      "teamName" : `${teamName}`,
+                      "notificationRequestId": notificationRequestId,
+                      "receiverId": id
                     },
                     "webpush": {
                         "fcm_options": {
@@ -161,9 +273,9 @@ app.use((req,res,next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://agirasiva:mYJlwoA7hfqkd12F@cluster0.evyud5n.mongodb.net/slotbooking?retryWrites=true&w=majority"
+    process.env.MONGO_URL
   )
   .then(() => {
-    app.listen(process.env.PORT);
+    app.listen(port);
     console.log("db connected successfully");
   });
