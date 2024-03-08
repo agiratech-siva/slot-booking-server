@@ -25,6 +25,17 @@ const userSchema = mongoose.Schema({
 
     teamusersId: [String],
 
+    teamRequests : [{
+        teamNotificationId: String,
+        teamName: String,
+        senderDetails : {
+            employee_Id: {
+                type: String
+                
+            }
+        }
+    }]
+
 },{timeStamps: true});
 
 
