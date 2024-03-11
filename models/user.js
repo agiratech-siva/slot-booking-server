@@ -29,10 +29,9 @@ const userSchema = mongoose.Schema({
         teamNotificationId: String,
         teamName: String,
         senderDetails : {
-            employee_Id: {
-                type: String
-                
-            }
+            employee_Id: String,
+            fullname: String,
+            mail : String
         }
     }]
 
