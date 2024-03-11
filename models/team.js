@@ -6,8 +6,13 @@ const teamSchema = mongoose.Schema({
     name: String,
     
     members: {
-        type: [String],
-        ref: User
+        type: [{
+            ObjectId: {
+                type: mongoose.Schema.ObjectId,
+                ref: User
+            },
+            employeeId: String
+        }],
     },
 
 },{timeStamps: true});
