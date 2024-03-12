@@ -39,8 +39,8 @@ exports.addSlotDataForTheDay = async (req,res,next) => {
 
 
 exports.getSlotDataForDifferentTime = async(req,res,next) => {
-    const time = req.query.time;
 
+    const time = req.query.time;
     const date = new Date();
     const dateString = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
     const hours = date.getHours();
@@ -65,13 +65,15 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
         else if(hours <= 18){
 
             const response = await Slot.find({Date: dateString}, hrs);
+            if(response.length == 0){
+                return res.status(404).send({message: "date not found"});
+            }
             const [result] = response
             const slotsAvailable = result[hours];
 
             const filteredslot = slotsAvailable.filter((slot) => {
 
                 if(slot["time"] > minutes){
-                    console.log("inside");
                     return true;
                 }
 

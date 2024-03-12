@@ -4,8 +4,12 @@ const teamController = require("../controllers/team")
 
 router.get("/getteamrequests/:id", teamController.getTeamRequests);
 
-router.get("/teamacceptnotification/:employeeId/:teamNotificationId/:status/:teamname", teamController.teamAcceptRejectNotification);
+router.post("/teamacceptnotification/:employeeId/:teamNotificationId/:status/:teamname", teamController.teamAcceptRejectNotification);
 
-router.get("/sendJoinTeamNotification/:id/:senderId/:teamName", teamController.sendJoinTeamNotification);
+router.post("/sendJoinTeamNotification/:id/:senderId/:teamName", teamController.sendJoinTeamNotification);
 
 module.exports = router;
+
+
+
+

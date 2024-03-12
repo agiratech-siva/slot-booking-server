@@ -5,7 +5,7 @@ const usersController = require("../controllers/users");
 
 router.get("/listusersforteam/:id", usersController.listUsersForTeam);
 
-router.post("/", usersController.addUserToTheDb);
+router.post("/addusertothedb", usersController.addUserToTheDb);
 
 router.post("/addRegistrationToken/:id", usersController.addRegistrationToken);
 
