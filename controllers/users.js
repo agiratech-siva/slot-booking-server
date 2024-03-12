@@ -30,13 +30,13 @@ exports.listUsersForTeam = async (req,res,next) => {
               $ne: id
             }}
           ]
-        });
+        },{fullname: 1, mail: 1, employeeId: 1});
 
         if(userslist.length == 0){
-          return res.status(404).send({message: "u are having your team with everybody"});
+          return res.status(200).send({message: "no users are left for u to make a team with them", userslist: [], empty: true});
         }
 
-        res.status(200).send({message: "successful", userslist: userslist});
+        res.status(200).send({message: "successful", userslist: userslist, empty: false});
 
     }catch(err){
         console.log(err);

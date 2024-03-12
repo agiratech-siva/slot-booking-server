@@ -91,7 +91,7 @@ exports.teamAcceptRejectNotification =  async (req,res,next) => {
             senderUser.registeredToken.map(registeredToken => {
                 sendTeamStatusNotification(registeredToken,'rejected',teamname, senderUser.fullname,bearertoken);
             })
-
+            
             res.status(200).status({message: "team invitation is declined by the other team member"});
         
         }
@@ -108,7 +108,7 @@ exports.sendJoinTeamNotification = async(req,res,next) => {
     const id = req.params.id;
     const senderId = req.params.senderId;
     const teamName = req.params.teamName;
-
+    console.log(id,senderId,teamName);
     try{
 
         const user = await User.findOne({employeeId: id});

@@ -7,4 +7,6 @@ router.get("/refreshSlotForTheDay", slotController.addSlotDataForTheDay );
 
 router.get("/getSlotDataForDifferentTime", slotController.getSlotDataForDifferentTime);
 
+router.post("/addSlotDataForTheDay", slotController.addSlotDataForTheDay);
+
 module.exports = router;

@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/users", userRoutes);
-app.use("/team", teamRoutes);
+app.use("/teams", teamRoutes);
 app.use("/slots", slotRoutes);
 
 app.use((req, res, next) => {
