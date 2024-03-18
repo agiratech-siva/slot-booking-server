@@ -67,5 +67,8 @@ const slotSchmea = mongoose.Schema({
 
 
 });
-
+const Slot = mongoose.model("Slot", slotSchmea);
 module.exports = mongoose.model("Slot", slotSchmea);
+
+Slot.watch().
+  on('change', data => console.log(data));

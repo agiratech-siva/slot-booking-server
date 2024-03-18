@@ -9,4 +9,6 @@ router.get("/getSlotDataForDifferentTime", slotController.getSlotDataForDifferen
 
 router.post("/addSlotDataForTheDay", slotController.addSlotDataForTheDay);
 
+router.post("/selectSlot/", slotController.selectSlot)
+
 module.exports = router;
