@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Booking = require("./booking");
 
 const userSchema = mongoose.Schema({
     name: {
@@ -7,6 +8,10 @@ const userSchema = mongoose.Schema({
 
     employeeId: {
         type: String
+    },
+
+    maxSlots: {
+        type: Number,
     },
 
     registeredToken: [String],
@@ -33,7 +38,17 @@ const userSchema = mongoose.Schema({
             fullname: String,
             mail : String
         }
-    }]
+    }],
+
+    bookingRequests :  [{
+        objectId: {
+            type: mongoose.Schema.ObjectId,
+            ref: Booking,
+        },
+        bookingId: String,
+        time: Number,
+        isValid: Boolean
+    }],
 
 },{timestamps: true});
 

@@ -1,74 +1,138 @@
 const mongoose = require("mongoose");
 
-const slotSchmea = mongoose.Schema({
+const slotSchema = mongoose.Schema({
     Date: String,
     "10": {
         type: [{
-            time: Number,
+            time: String,
             status: String,
+            bookingId: {
+                type: String,
+            }
         }], 
     },
 
     "11": {
         type: [{
-            time: Number,
+            time: String,
             status: String,
+            bookingId: {
+                type: String,
+            }
         }], 
     },
 
     "12": {
         type: [{
-            time: Number,
+            time: String,
             status: String,
+            bookingId: {
+                type: String,
+            }
         }], 
     },
 
     "13": {
         type: [{
-            time: Number,
+            time: String,
             status: String,
+            bookingId: {
+                type: String,
+            }
         }], 
     },
 
     "14": {
         type: [{
-            time: Number,
+            time: String,
             status: String,
+            bookingId: {
+                type: String,
+            }
         }], 
     },
 
     "15": {
         type: [{
-            time: Number,
+            time: String,
             status: String,
+            bookingId: {
+                type: String,
+            }
         }], 
     },
 
     "16": {
         type: [{
-            time: Number,
+            time: String,
             status: String,
+            bookingId: {
+                type: String,
+            }
         }], 
     },
 
     "17": {
         type: [{
-            time: Number,
+            time: String,
             status: String,
+            bookingId: {
+                type: String,
+            }
         }], 
     },
 
     "18": {
         type: [{
-            time: Number,
+            time: String,
             status: String,
+            bookingId: {
+                type: String,
+            }
+        }], 
+    },
+
+    "19": {
+        type: [{
+            time: String,
+            status: String,
+            bookingId: {
+                type: String,
+            }
+        }], 
+    },
+    "20": {
+        type: [{
+            time: String,
+            status: String,
+            bookingId: {
+                type: String,
+            }
+        }], 
+    },
+    "21": {
+        type: [{
+            time: String,
+            status: String,
+            bookingId: {
+                type: String,
+            }
+        }], 
+    },
+    "22": {
+        type: [{
+            time: String,
+            status: String,
+            bookingId: {
+                type: String,
+            }
         }], 
     }
 
 
-});
-const Slot = mongoose.model("Slot", slotSchmea);
-module.exports = mongoose.model("Slot", slotSchmea);
 
-Slot.watch().
-  on('change', data => console.log(data));
+});
+
+module.exports = mongoose.model("Slot", slotSchema);
+
+

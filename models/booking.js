@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 
 const bookingSchema = mongoose.Schema({
 
+
     bookingId: {
         type: String,
         required: true
@@ -19,7 +20,7 @@ const bookingSchema = mongoose.Schema({
     },
 
     time: {
-        type: Number,
+        type: String,
         required: true,
     },
 
@@ -34,31 +35,34 @@ const bookingSchema = mongoose.Schema({
         type: {
             "employee-id": String,
             "name": String,
-            "status": Boolean
+            "status": String
         },
         required: true
     },
 
-    receiver2: {
+    opponent1: {
         type: {
             "employee-id": String,
             "name": String,
-            "status": Boolean
+            "status": String
         },
         required: true
     },
 
-    receiver3: {
+    opponent2: {
         type: {
             "employee-id": String,
             "name": String,
-            "status": Boolean
+            "status": String
         },
         required: true
-    }
+    },
+
+    myteamname : String,
+    opponentteamname: String
 
 
-})
+},{timestamps: true});
 
 
 module.exports = mongoose.model("Booking", bookingSchema);

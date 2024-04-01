@@ -4,9 +4,12 @@ const userRoutes = require("./routes/users");
 const teamRoutes = require("./routes/team");
 const slotRoutes = require("./routes/slot");
 const bookingRoutes = require("./routes/booking");
+const setupSocket = require("./util/socket");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const { config } = require("dotenv");
+
+
 config();
 
 const port = process.env.PORT || 8000;
@@ -27,7 +30,8 @@ app.use((req, res, next) => {
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
-    app.listen(port);
+    const server = app.listen(port);
+    setupSocket(server);
     console.log("db connected successfully");
   })
   .catch((err) => {

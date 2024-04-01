@@ -11,7 +11,7 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
     
     const hrs = {};
 
-    for(let i=10; i<=18; i++){
+    for(let i=10; i<=22; i++){
 
         if(i >= hours ){
             hrs[i] = 1;
@@ -21,13 +21,13 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
     hrs["_id"] = 0;
     
     try{
-        if(time && hours <=18 ){
+        if(time && hours <=22 ){
             
             const response = await Slot.findOne({Date: dateString}, {[time]: true});
             return res.status(200).send({response: response});
         }
 
-        else if(hours <= 18){
+        else if(hours <= 22){
 
             const response = await Slot.find({Date: dateString}, hrs);
             console.log(typeof response, response.length);
@@ -73,8 +73,9 @@ exports.addSlotDataForTheDay = async (req,res,next) => {
     let x= {}
     
     for(let i=0; i<60; i = i+ 15){
-        x.time = i;
+        x.time = i.toString().padStart(2,"0");
         x.status = "available";
+        x.bookingId = "";
         objArray.push(x);
         x = {};
     }
@@ -90,7 +91,11 @@ exports.addSlotDataForTheDay = async (req,res,next) => {
             15: objArray,
             16: objArray,
             17: objArray,
-            18: objArray
+            18: objArray,
+            19: objArray,
+            20: objArray,
+            21: objArray,
+            22: objArray
         })
 
         res.status(200).send({message: "slot creation successful", slotData: response});
