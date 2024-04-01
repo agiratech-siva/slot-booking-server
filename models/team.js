@@ -11,7 +11,8 @@ const teamSchema = mongoose.Schema({
                 type: mongoose.Schema.ObjectId,
                 ref: User
             },
-            employeeId: String
+            employeeId: String,
+            
         }],
     },
 

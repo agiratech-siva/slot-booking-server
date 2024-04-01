@@ -91,8 +91,8 @@ exports.teamAcceptRejectNotification =  async (req,res,next) => {
             senderUser.registeredToken.map(registeredToken => {
                 sendTeamStatusNotification(registeredToken,'rejected',teamname, senderUser.fullname,bearertoken);
             })
-            
-            res.status(200).status({message: "team invitation is declined by the other team member"});
+
+            res.status(200).send({message: "team invitation is declined by the other team member"});
         
         }
         
@@ -159,3 +159,57 @@ exports.sendJoinTeamNotification = async(req,res,next) => {
     }
     
 };
+
+
+exports.getMyTeams = async (req,res,next) => {
+    const employee_Id = req.params.id;
+    try{
+        const response = await Team.find({members: {$elemMatch: {employeeId: employee_Id}}}).populate({
+            path: "members.ObjectId",
+            select: "fullname mail"
+        });
+
+        if(response.length == 0){
+            return res.status(404).send({message: "no teams found, create one in the create team section"});
+        }
+
+        console.log(typeof response);
+
+        res.status(200).send({message: "your team listing successful.", teams: response});
+    }catch(err){
+        console.log(err);
+        res.status(500).send({message: "internal server error"});
+    }
+
+}
+
+exports.getOpponentTeams = async (req,res,next) => {
+    const member1 = req.params.member1;
+    const member2 = req.params.member2;
+    console.log(member1,member2);
+    try{
+
+        const response = await Team.find({members: {$not: {
+            $elemMatch: {
+                $or: [
+                    {employeeId: member1},
+                    {employeeId: member2}
+                ]
+            }
+        }}}).populate({
+            path: "members.ObjectId",
+            select: "fullname mail"
+        })
+
+        if(response.length == 0){
+            return res.status(404).send({message: "no opponent found"});
+        }
+        
+        
+
+        res.status(200).send({message: "opponent teams listed successfully", teams: response});
+
+    }catch(err){
+
+    }
+}

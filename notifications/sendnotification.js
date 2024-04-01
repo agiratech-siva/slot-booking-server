@@ -60,9 +60,7 @@ const sendTeamStatusNotification = async (
         },
       }),
     });
-    if(!response.ok){
-      throw new Error("error sending notification");
-    }
+    
     const result = await response.json();
     console.log("result", result);
 
@@ -103,7 +101,7 @@ const sendTeamAcceptRejectNotification = async (
         },
       }),
     });
-
+    
     if(!response.ok){
       throw new Error("error sending notification");
     }
