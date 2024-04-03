@@ -19,7 +19,7 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
     }
 
     hrs["_id"] = 0;
-    
+    console.log(hrs);
     try{
         if(time && hours <=22 ){
             
@@ -38,7 +38,7 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
             
             const [result] = response
             const slotsAvailable = result[hours];
-
+            console.log("result",result, slotsAvailable);
             const filteredslot = slotsAvailable.filter((slot) => {
 
                 if(slot["time"] > minutes){
@@ -48,8 +48,12 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
                 return false;
             } );
 
+            console.log(filteredslot);
+
     
             result[hours] = filteredslot;
+            console.log(result, result[hours]);
+
             return res.status(200).send({response: result});
         }
         
