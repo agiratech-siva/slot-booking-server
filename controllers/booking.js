@@ -2,13 +2,11 @@ const Slot = require("../models/slot");
 const uuid = require("uuid");
 const Booking = require("../models/booking");
 const User = require("../models/user");
-// const getDb = require("../util/redisdatabase");
+const {stringDate} = require("../util/dateString");
 
 exports.addBookingData = async ( req,res,next) => {
 
-    const date = new Date();
-
-    const dateString = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+    const dateString = stringDate();
 
     const {hour,minutes,initiator,otherteammember,opponent1, opponent2, myteamname, opponentteamname} = req.body;
     console.log(hour, typeof hour, minutes, typeof minutes);
@@ -78,7 +76,6 @@ exports.addBookingData = async ( req,res,next) => {
             opponentteamname: opponentteamname
         })
         available[hour][0].status = "pending";
-        // await getDb().setEx(bookingId, 120, "true");
         await available.save();
 
         const otherTeamMemberuser = await User.findOne({employeeId: otherteammember.employeeId});
@@ -90,7 +87,7 @@ exports.addBookingData = async ( req,res,next) => {
           });     
         console.log(opponentUsers);
 
-        otherTeamMemberuser.bookingRequests.push({objectId: response._id,bookingId: bookingId,time: Date.now(),isValid: true});
+        otherTeamMemberuser.bookingRequests.push({objectId: response._id,bookingId: bookingId,time: Date.now() ,isValid: true});
         opponentUsers.forEach(async (opponentUser) => {
           opponentUser.bookingRequests.push({
             objectId: response._id,

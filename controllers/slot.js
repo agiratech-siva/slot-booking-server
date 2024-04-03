@@ -1,14 +1,11 @@
 const Slot = require("../models/slot");
-const uuid = require("uuid");
+const {dt,stringDate}  = require("../util/dateString");
 
 exports.getSlotDataForDifferentTime = async(req,res,next) => {
-
+    const dateString = stringDate();
     const time = req.query.time;
-    const date = new Date();
-    const dateString = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    console.log(hours,minutes,date,time);
+    const hours = dt.hour;
+    const minutes = dt.minute;
     const hrs = {};
 
     for(let i=10; i<=22; i++){
@@ -38,6 +35,12 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
             
             const [result] = response
             const slotsAvailable = result[hours];
+
+
+            if(!slotsAvailable){
+                return res.status(200).send({response: result});
+            }
+            
             console.log("result",result, slotsAvailable);
             const filteredslot = slotsAvailable.filter((slot) => {
 
@@ -70,9 +73,8 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
 
 exports.addSlotDataForTheDay = async (req,res,next) => {
 
-    const date = new Date();
-    const dateString = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
 
+    const dateString = stringDate();
     const objArray = [];
     let x= {}
     
@@ -114,8 +116,7 @@ exports.addSlotDataForTheDay = async (req,res,next) => {
 exports.selectSlot = async (req,res,next) => {
     const {hour,time} = req.body;
 
-    const date = new Date();
-    const dateString = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+    const dateString = stringDate();
 
     try{
 

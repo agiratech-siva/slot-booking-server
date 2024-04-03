@@ -126,9 +126,8 @@ exports.sendJoinTeamNotification = async(req,res,next) => {
         }
 
         function generateNotificationRequestId() {
-            const timestamp = new Date().getTime();
             const uniqueId = uuid.v4();
-            const notificationRequestId = `teamnotification_${timestamp}_${uniqueId}`;
+            const notificationRequestId = `teamnotification_${uniqueId}`;
             return notificationRequestId;
         }
 
