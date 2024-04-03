@@ -8,7 +8,7 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
     const dateString = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    
+    console.log(hours,minutes,date,time);
     const hrs = {};
 
     for(let i=10; i<=22; i++){
