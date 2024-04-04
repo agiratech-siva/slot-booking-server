@@ -1,8 +1,9 @@
 const Slot = require("../models/slot");
-const {dt,stringDate}  = require("../util/dateString");
+const {stringDate}  = require("../util/dateString");
 
 exports.getSlotDataForDifferentTime = async(req,res,next) => {
     const dateString = stringDate();
+    const dt = DateTime.now().setZone('Asia/Kolkata');
     const time = req.query.time;
     const hours = dt.hour;
     const minutes = dt.minute;
