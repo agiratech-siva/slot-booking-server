@@ -7,7 +7,7 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
     const hours = dt.hour;
     const minutes = dt.minute;
     const hrs = {};
-
+    console.log(hours,minutes,dateString);
     for(let i=10; i<=22; i++){
 
         if(i >= hours ){
@@ -41,7 +41,7 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
                 return res.status(200).send({response: result});
             }
             
-            console.log("result",result, slotsAvailable);
+            console.log("result",result, "slotsavailable",slotsAvailable);
             const filteredslot = slotsAvailable.filter((slot) => {
 
                 if(slot["time"] > minutes){
@@ -51,11 +51,11 @@ exports.getSlotDataForDifferentTime = async(req,res,next) => {
                 return false;
             } );
 
-            console.log(filteredslot);
+            console.log("filteredslot",filteredslot);
 
     
             result[hours] = filteredslot;
-            console.log(result, result[hours]);
+            console.log("secondresult",result, "resulthours",result[hours]);
 
             return res.status(200).send({response: result});
         }
